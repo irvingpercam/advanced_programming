@@ -181,13 +181,13 @@ int main(int argc, char* argv[]) {
     /* Get the commands from files */
     // FILE 1
     readFromFile(argv[1], cmd1);
-    separateCommas(&cmd1);
+    separateCommas(cmd1);
     // FILE 2
     readFromFile(argv[2], cmd2);
-    separateCommas(&cmd2);
+    separateCommas(cmd2);
     // FILE 3
     readFromFile(argv[3], cmd3);
-    separateCommas(&cmd3);
+    separateCommas(cmd3);
     // Signals
     signal(SIGUSR1, processSignal);
     signal(SIGUSR2, processSignal);
