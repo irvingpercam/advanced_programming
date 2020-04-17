@@ -26,8 +26,13 @@
 #include <setjmp.h>
 #include <signal.h>
 typedef unsigned long ulong;
-char *l1, *l2, *l3, *l4, *l5, *l6;
 char cmd1[100], cmd2[100], cmd3[100];
+char *l1;
+char *l2;
+char *l3;
+char *l4;
+char *l5;
+char *l6;
 // void readFile(){
 //     FILE *file = fopen("file1.txt", "r");
 //     if(file){
