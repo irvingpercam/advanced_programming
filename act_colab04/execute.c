@@ -81,7 +81,8 @@ char cmd1[100], cmd2[100], cmd3[100];
 //}
 
 /* Read commands from file */
-int readFromFile(FILE* file, char* buffer){
+int readFromFile(char* filename, char* buffer){
+    FILE* file = fopen(filename, "r");
     fseek(file, 0L, SEEK_END);
     long ptr = ftell(file);
     rewind(file);
@@ -92,7 +93,7 @@ int readFromFile(FILE* file, char* buffer){
         return 1;
     }
 }/* Separate commas */
-void separateCommas(char* cmdopt){
+void separateCommas(char* cmdopt[]){
     l1 = strtok(cmdopt, ",");
     l2 = strtok(NULL, ",");
 }
@@ -179,13 +180,13 @@ int main(int argc, char* argv[]) {
     }
     /* Get the commands from files */
     // FILE 1
-    readFromFile(file1, cmd1);
+    readFromFile(argv[1], cmd1);
     separateCommas(&cmd1);
     // FILE 2
-    readFromFile(file2, cmd2);
+    readFromFile(argv[2], cmd2);
     separateCommas(&cmd2);
     // FILE 3
-    readFromFile(file3, cmd3);
+    readFromFile(argv[3], cmd3);
     separateCommas(&cmd3);
     // Signals
     signal(SIGUSR1, processSignal);
