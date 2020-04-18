@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
     l5 = strtok(cmd3, ",");
     l6 = strtok(NULL, ",");
     // Signals
-    puts("Waiting for signal...");
+    puts("Waiting for a signal...");
     signal(SIGUSR1, signalHandler);
     signal(SIGUSR2, signalHandler);
     signal(SIGPWR, signalHandler);
