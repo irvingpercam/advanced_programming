@@ -140,7 +140,7 @@ void processSignal(int signalnum){
             sleep(3);
             break;
         case SIGINT:
-            printf("Ending...");
+            puts("Ending...");
             _exit(0);
             break;         
     }
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
     signal(SIGUSR2, processSignal);
     signal(SIGPWR, processSignal);
     signal(SIGINT, processSignal);
-    printf("Waiting for  a signal...");
+    puts("Waiting for  a signal...");
     while(1);
   return 0;
 }
