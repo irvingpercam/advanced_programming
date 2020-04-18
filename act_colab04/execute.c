@@ -26,65 +26,8 @@
 #include <setjmp.h>
 #include <signal.h>
 typedef unsigned long ulong;
-char cmd1[100], cmd2[100], cmd3[100];
-char *l1;
-char *l2;
-char *l3;
-char *l4;
-char *l5;
-char *l6;
-// void readFile(){
-//     FILE *file = fopen("file1.txt", "r");
-//     if(file){
-//         char **array = malloc(sizeof(char *) * 10);
-//         char filestring[1];
-//         char buffer[BUFSIZ];
-//         for (size_t i = 0; fgets(buffer, sizeof buffer, file); i++)
-//         {
-//             array[i] = malloc(sizeof buffer);
-//             strcpy(array[i], buffer);
-//         }
-//         // filestring[0] = array[0];
-//         memcpy(filestring, array[0], 1);
-//         for(int k = 0; k < 1; k++){
-//             printf("%s\n", file[k]);
-//         }
-//     }
-
-// }
-
-
-// int readdFile( ){
-//     int source;
-//     char *cmd;
-//     char *argv[100];
-//     char s[2] = ",";
-//     FILE *file = fopen("file1.txt", "r");
-//     if(file){
-//         char *buffer;
-//         int size = lseek(source, 0, SEEK_END);
-//         buffer = (unsigned int*) malloc(sizeof(unsigned int) * size);
-//         lseek(source, 0, SEEK_SET);
-//         read(source, buffer, size);
-
-//         cmd = strtok(buffer, s);
-//         argv[0] = cmd;
-//         cmd = strtok(NULL, s);
-//         int i = 1;
-//         for (i = 1; cmd != NULL; i++)
-//         {
-//             cmd = strtok(NULL, " ");
-//             argv[i] = cmd;
-//         }
-//         argv[i] = 0;
-//         for (int i = 0; i < sizeof argv; i++)
-//         {
-//             printf("%s\n", argv[i]);
-//         }
-//     }
-
-//}
-
+char *l1, *l2, *l3, *l4, *l5, *l6;
+char cmd1[20], cmd2[20], cmd3[20];
 /* Read commands from file */
 int readFromFile(FILE *file, char* buffer){
     fseek(file, 0L, SEEK_END);
@@ -96,10 +39,6 @@ int readFromFile(FILE *file, char* buffer){
         fclose(file);
         return 1;
     }
-}/* Separate commas */
-void separateCommas(char cmdopt[]){
-    l1 = strtok(cmdopt, ",");
-    l2 = strtok(NULL, ",");
 }
 /* Signal Handler */
 void processSignal(int signalnum){
@@ -124,7 +63,7 @@ void processSignal(int signalnum){
             }
             else if (pid == 0)
             {
-                execlp(l1, l2, NULL);
+                execlp(l3, l4, NULL);
             }
             sleep(3);
             break;
@@ -135,7 +74,7 @@ void processSignal(int signalnum){
             }
             else if (pid == 0)
             {
-                execlp(l1, l2, NULL);
+                execlp(l5, l6, NULL);
             }
             sleep(3);
             break;
@@ -186,15 +125,18 @@ int main(int argc, char* argv[]) {
     // FILE 1
     FILE* f1 = fopen(argv[1], "r");
     readFromFile(f1, cmd1);
-    separateCommas(cmd1);
+    l1 = strtok(cmd1, ",");
+    l2 = strtok(NULL, ",");
     // FILE 2
     FILE* f2 = fopen(argv[2], "r");
     readFromFile(f2, cmd2);
-    separateCommas(cmd2);
+    l3 = strtok(cmd2, ",");
+    l4 = strtok(NULL, ",");
     // FILE 3
     FILE* f3 = fopen(argv[3], "r");
     readFromFile(f3, cmd3);
-    separateCommas(cmd3);
+    l5 = strtok(cmd3, ",");
+    l6 = strtok(NULL, ",");
     // Signals
     signal(SIGUSR1, processSignal);
     signal(SIGUSR2, processSignal);
