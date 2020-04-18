@@ -13,23 +13,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <dirent.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <limits.h> 
 #include <math.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/types.h>
 typedef unsigned long ulong;
+
 char *l1, *l2, *l3, *l4, *l5, *l6;
 char cmd1[20], cmd2[20], cmd3[20];
+
 /* Read commands from file */
-int readFromFile(FILE *file, char* buffer){
+int readFile(char* filename, char* buffer){
+    FILE* file = fopen(filename, "r");
     fseek(file, 0L, SEEK_END);
     long ptr = ftell(file);
     rewind(file);
@@ -41,42 +38,42 @@ int readFromFile(FILE *file, char* buffer){
     }
 }
 /* Signal Handler */
-void processSignal(int signalnum){
+void signalHandler(int signalnum){
     int pid;
     switch (signalnum)
     {
-    case SIGUSR1:
-            if ((pid = fork()) < 0)
+        case SIGUSR1:
+            if ((pid = vfork()) < 0)
             {
-                perror("fork");
+                perror("Failed to create child");
             }
             else if (pid == 0)
             {
                 execlp(l1, l2, NULL);
+                _exit(1);
             }
-            sleep(3);
         break;
         case SIGUSR2:
-            if ((pid = fork()) < 0)
+            if ((pid = vfork()) < 0)
             {
-                perror("fork");
+                perror("Failed to create child");
             }
             else if (pid == 0)
             {
                 execlp(l3, l4, NULL);
+                _exit(1);
             }
-            sleep(3);
             break;
         case SIGPWR:
-            if ((pid = fork()) < 0)
+            if ((pid = vfork()) < 0)
             {
-                perror("fork");
+                perror("Failed to create child");
             }
             else if (pid == 0)
             {
                 execlp(l5, l6, NULL);
+                _exit(1);
             }
-            sleep(3);
             break;
         case SIGINT:
             puts("Ending...");
@@ -123,25 +120,27 @@ int main(int argc, char* argv[]) {
     /* Get the commands from files */
     // FILE 1
     FILE* f1 = fopen(argv[1], "r");
-    readFromFile(f1, cmd1);
+    readFile(argv[1], cmd1);
     l1 = strtok(cmd1, ",");
     l2 = strtok(NULL, ",");
     // FILE 2
     FILE* f2 = fopen(argv[2], "r");
-    readFromFile(f2, cmd2);
+    readFile(argv[2], cmd2);
     l3 = strtok(cmd2, ",");
     l4 = strtok(NULL, ",");
     // FILE 3
     FILE* f3 = fopen(argv[3], "r");
-    readFromFile(f3, cmd3);
+    readFile(argv[3], cmd3);
     l5 = strtok(cmd3, ",");
     l6 = strtok(NULL, ",");
     // Signals
-    signal(SIGUSR1, processSignal);
-    signal(SIGUSR2, processSignal);
-    signal(SIGPWR, processSignal);
-    signal(SIGINT, processSignal);
-    puts("Waiting for a signal...");
-    while(1);
+    puts("Waiting for signal...");
+    signal(SIGUSR1, signalHandler);
+    signal(SIGUSR2, signalHandler);
+    signal(SIGPWR, signalHandler);
+    signal(SIGINT, signalHandler);
+    while(1) {
+        pause();
+    }
   return 0;
 }
