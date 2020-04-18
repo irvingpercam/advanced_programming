@@ -45,7 +45,7 @@ void signalHandler(int signalnum){
         case SIGUSR1:
             if ((pid = vfork()) < 0)
             {
-                perror("Failed to create child");
+                perror("fork");
             }
             else if (pid == 0)
             {
@@ -56,7 +56,7 @@ void signalHandler(int signalnum){
         case SIGUSR2:
             if ((pid = vfork()) < 0)
             {
-                perror("Failed to create child");
+                perror("fork");
             }
             else if (pid == 0)
             {
@@ -67,7 +67,7 @@ void signalHandler(int signalnum){
         case SIGPWR:
             if ((pid = vfork()) < 0)
             {
-                perror("Failed to create child");
+                perror("fork");
             }
             else if (pid == 0)
             {
