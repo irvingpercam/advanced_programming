@@ -184,16 +184,16 @@ int main(int argc, char* argv[]) {
     }
     /* Get the commands from files */
     // FILE 1
-    FILE* file = fopen(argv[1], "r");
-    readFromFile(file, cmd1);
+    FILE* f1 = fopen(argv[1], "r");
+    readFromFile(f1, cmd1);
     separateCommas(cmd1);
     // FILE 2
-    FILE* file2 = fopen(argv[2], "r");
-    readFromFile(file2, cmd2);
+    FILE* f2 = fopen(argv[2], "r");
+    readFromFile(f2, cmd2);
     separateCommas(cmd2);
     // FILE 3
-    FILE* file3 = fopen(argv[3], "r");
-    readFromFile(file3, cmd3);
+    FILE* f2 = fopen(argv[3], "r");
+    readFromFile(f2, cmd3);
     separateCommas(cmd3);
     // Signals
     signal(SIGUSR1, processSignal);
