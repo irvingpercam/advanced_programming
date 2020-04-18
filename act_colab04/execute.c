@@ -192,8 +192,8 @@ int main(int argc, char* argv[]) {
     readFromFile(f2, cmd2);
     separateCommas(cmd2);
     // FILE 3
-    FILE* f2 = fopen(argv[3], "r");
-    readFromFile(f2, cmd3);
+    FILE* f3 = fopen(argv[3], "r");
+    readFromFile(f3, cmd3);
     separateCommas(cmd3);
     // Signals
     signal(SIGUSR1, processSignal);
