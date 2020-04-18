@@ -86,7 +86,6 @@ void processSignal(int signalnum){
 }
 int main(int argc, char* argv[]) {
     int file1, file2, file3;
-    char cmd[100];
     if (argc != 4) {
         fprintf(stderr, "usage: %s file1 file2 file3\n", argv[0]);
         return -2;
@@ -127,16 +126,19 @@ int main(int argc, char* argv[]) {
     readFromFile(f1, cmd1);
     l1 = strtok(cmd1, ",");
     l2 = strtok(NULL, ",");
+    fclose(f1);
     // FILE 2
     FILE* f2 = fopen(argv[2], "r");
     readFromFile(f2, cmd2);
     l3 = strtok(cmd2, ",");
     l4 = strtok(NULL, ",");
+    fclose(f2);
     // FILE 3
     FILE* f3 = fopen(argv[3], "r");
     readFromFile(f3, cmd3);
     l5 = strtok(cmd3, ",");
     l6 = strtok(NULL, ",");
+    fclose(f3);
     // Signals
     signal(SIGUSR1, processSignal);
     signal(SIGUSR2, processSignal);
