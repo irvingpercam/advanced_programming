@@ -109,7 +109,7 @@ void processSignal(int signalnum){
     case SIGUSR1:
             if ((pid = fork()) < 0)
             {
-                perror("No child process");
+                perror("fork");
             }
             else if (pid == 0)
             {
@@ -120,7 +120,7 @@ void processSignal(int signalnum){
         case SIGUSR2:
             if ((pid = fork()) < 0)
             {
-                perror("No child process");
+                perror("fork");
             }
             else if (pid == 0)
             {
@@ -131,7 +131,7 @@ void processSignal(int signalnum){
         case SIGPWR:
             if ((pid = fork()) < 0)
             {
-                perror("No child process");
+                perror("fork");
             }
             else if (pid == 0)
             {
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
     signal(SIGUSR2, processSignal);
     signal(SIGPWR, processSignal);
     signal(SIGINT, processSignal);
-    puts("Waiting for  a signal...");
+    puts("Waiting for a signal...");
     while(1);
   return 0;
 }
