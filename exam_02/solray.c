@@ -16,103 +16,64 @@
 #include <math.h>
 #define SEED 12345
 
-typedef unsigned int uints;
-typedef unsigned long ulong;
-
 const char *input;
 const char *output;
 int iteration = 1;
 int pids[2];
 
-//-------------- REFACTOR -----------------
+void TWO(){
+    printf("TWO: I received SIGUSR2 from ANALYSIS. I will start to work");
 
-// Ejecutar el comando según la señal
-void handler(int signal){
-//void handler(int signal, int iteration, char *input, char *output){
-    char inputFile[100], outputFile[100], itr[2], format[10];
-    int size;
+    char inputFile[100], outputFile[100], itr[2];
+    int size = sprintf(itr,"%i",iteration);
 
     strcpy(inputFile, input);
-    size = sprintf(itr,"%d",iteration);
-
-    strcpy(format, ".dat");
     strcat(inputFile, itr);
-    strcat(inputFile, format);
-    printf("Input filename: %s\n",inputFile);
+    strcat(inputFile, ".dat");
 
     strcpy(outputFile, output);
     strcat(outputFile, itr);
-    strcat(outputFile, format);
-    printf("Output filename: %s\n",outputFile);
+    strcat(outputFile, ".dat");
 
-    switch(signal){
-        case SIGUSR1:
-                    printf("ONE: I received SIGUSR1 from ANALYSIS. I will start to work");
-                    
-                    int file;
-                    if((file = open(inputFile, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0){
-                        printf("Unable to create file");
-                        exit(-3);
-                    }
-
-                    uints *buffer1;
-                    ulong fileSize1 = lseek(file, 0, SEEK_END);
-                    buffer1 = (uints*) malloc(sizeof(uints) * fileSize1);
-
-                    printf("File: %s --> ",inputFile);
-                    int num[105];
-                    int total = 100;
-                    for(int i = 0; i < total; i++){
-                        num[i] = (rand() % 100) + 1;
-                        write(num[i], buffer1, file);
-                        printf("%i ",num[i]);
-                    }
-
-                    close(file);
-                    break;
-        case SIGUSR2: 
-                    printf("TWO: I received SIGUSR2 from ANALYSIS. I will start to work");
-
-                    int file1;
-                    if((file1 = open(inputFile, O_RDONLY)) < 0){
-                        printf("Unable to open file");
-                        exit(-4);
-                    }
-                    
-                    int nums[105];
-                    int numActual;
-                    int sum = 0;
-                    for(int i = 0; i<100; i++){
-                        numActual = read(file1, &nums[i], 105);
-                        sum = sum + numActual;
-                    }
-                    float mean = sum/100;
-
-                    float varSum = 0;
-                    for(int i = 0; i<100; i++){
-                        varSum = varSum + pow(abs(nums[i]-mean),2);
-                    }
-                    float variance = varSum/(99);
-
-                    int file2;
-                    if((file2 = open(outputFile, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0){
-                        printf("Unable to create file");
-                        exit(-5);
-                    }
-
-                    uints *buffer2;
-                    ulong fileSize2 = lseek(file2, 0, SEEK_END);
-                    buffer2 = (uints*) malloc(sizeof(uints) * fileSize2);
-
-                    write(mean, buffer2, file2);
-                    write(variance, buffer2, file2);
-
-                    close(file2);
-                    break;
+    int file1;
+    if((file1 = open(inputFile, O_RDONLY)) < 0){
+        printf("Unable to open file");
+        exit(-5);
     }
-}
 
-//------------ EN DESARROLLO --------------------------------------
+    int num;
+    int nums[105];
+    int f1d;
+    int sum = 0;
+    int i = 0;
+    while((f1d = read(file1, &num, sizeof(int))) != 0){
+        sum = sum + f1d;
+        nums[i] = f1d;
+         i++;
+    }
+    float mean = sum/100;
+
+    float acum = 0;
+    for(int i = 0; i<100; i++){
+        acum = acum + pow(fabsf(nums[i]-mean),2);
+    }
+    float variance = acum/(99);
+
+    printf("Mean = %f, Variance = %f",mean,variance);
+
+    int file2;
+    if((file2 = open(outputFile, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0){
+        printf("Unable to create file");
+        exit(-6);
+    }
+    write(file2, &mean, sizeof(float));
+    write(file2, &variance, sizeof(float));
+    close(file1);
+    close(file2);
+    iteration++;
+    printf("TWO: I send SIGUSR2 to ANALYSIS.\n");
+    kill(getppid(), SIGUSR2);
+}
 
 void ONE(){
     printf("ONE: I received SIGUSR1 from ANALYSIS. I will start to work");
@@ -132,31 +93,27 @@ void ONE(){
         exit(-4);
     }
 
-    uints *buffer1;
-    ulong fileSize1 = lseek(file, 0, SEEK_END);
-    buffer1 = (uints*) malloc(sizeof(uints) * fileSize1);
-
     printf("File: %s --> ",inputFile);
     int num;
+    srand(SEED);
     for(int i = 0; i < 100; i++){
         num = (rand() % 100) + 1;
-        write(num, buffer1, file);
+        write(file, &num, sizeof(int));
         printf("%i ",num);
     }
     close(file);
 
     iteration++;
-    //kill(getpid(), SIGUSR1);
+    printf("ONE: I send SIGUSR1 to ANALYSIS.\n");
+    kill(getppid(), SIGUSR1);
 }
 
-//----------- ESTO YA FUNCIONA ------------------------------------------------------
-
-void POne(){
+void P1(){
   signal(SIGUSR1, ONE);
   while(1);
 }
 
-void PTwo(){
+void P2(){
   signal(SIGUSR2, TWO);
   while(1);
 }
@@ -168,8 +125,8 @@ void handler(int signal){
             kill(pids[1], SIGUSR2);
 			break;
 		case SIGUSR2:
-            if (iteracion < 3){
-                iteracion++;
+            if (iteration < 3){
+                iteration++;
                 kill(pids[0], SIGUSR1);
             } else {
                 kill(pids[0], SIGINT);
@@ -182,11 +139,11 @@ void handler(int signal){
 
 void childs(int i){
     switch(i){
-        case 0: ṕrintf("I am ANALYSIS and I create ONE\n");
-                POne();
+        case 0: printf("I am ANALYSIS and I create ONE\n");
+                P1();
                 break;
-        case 1: ṕrintf("I am ANALYSIS and I create TWO\n");
-                PTwo();
+        case 1: printf("I am ANALYSIS and I create TWO\n");
+                P2();
                 break;
     }
 }
@@ -194,7 +151,7 @@ void childs(int i){
 int main(int argc, char *argv[]){
 
 	if(argc != 4){
-		printf("Usage: %s timeout prefix_input prefix_output", argv[0]);
+		printf("Usage: %s timeout prefix_input prefix_output\n", argv[0]);
 		return -1;
 	}
 
@@ -213,13 +170,12 @@ int main(int argc, char *argv[]){
             perror("Sin hijo");
             exit(-3);
         } else if (pid == 0){
-            PROCESS_CHILD(i);
+            childs(i);
         } else {
             pids[i] = pid;
         }
     }
 
-    srand(SEED);
 	signal(SIGUSR1, handler);
 	signal(SIGUSR2, handler);
     sleep(timeout);
