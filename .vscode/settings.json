@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "stat.h": "c",
-        "setjmp.h": "c"
+        "setjmp.h": "c",
+        "ratio": "c"
     }
 }

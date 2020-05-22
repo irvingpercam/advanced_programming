@@ -1,0 +1,12 @@
+/*
+*   TESTS
+*   The tests where performed with the given input files (a1181.txt and b1181.txt).
+*   threads: 1, execution time: 15.911314sec
+*   threads: 2, execution time: 7.381496sec
+*   threads: 3, execution time: 6.989684sec
+*   threads: 5, execution time: 4.870440sec
+*   threads: 10, execution time: 2.368243sec
+*   threads: 20, execution time: 1.369382sec
+*   threads: 50, execution time: 0.477704sec
+*   threads: 100, execution time: 0.222946sec
+*/
