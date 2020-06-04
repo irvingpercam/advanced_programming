@@ -1,3 +1,12 @@
+/*---------------------------------------
+* Programación avanzada: Proyecto final
+*
+* Fecha: 03-06-2020
+*
+* Autor: Irving Alain Aguilar Pérez - A01703171
+*
+*
+* Referencias: Ejercicios de https://github.com/Manchas2k4/advanced_programming/tree/master/
 /* SHELL LIBRARY */
 #ifndef SHELL_H
 #include <stdio.h>
@@ -50,12 +59,7 @@ int exec_cmd(char *cmd_input)
             cmd = strtok(NULL, " ");
         }
         cmds[i] = NULL;
-        if (execvp(cmds[0], cmds) == 0) {
-            printf("Running command...\n");
-        }
-        else
-        {
-            // IF CAN'T EXECUTE COMMAND
+        if (execvp(cmds[0], cmds) == -1) {
             perror("Can't execute command!\n");
             return -3;
         }
@@ -78,13 +82,13 @@ void run(char *cmd_input)
         {
             // EXECUTE COMMAND
             exec_cmd(cmd);
-            sleep(1);
             exit(0);
         }
         else
         {
-            count++;
+            cmd = strtok(NULL, "\n");
             cmd = strtok(NULL, ";");
+            count++;
         }
         while (count > 0)
         {
@@ -123,9 +127,11 @@ void batch(char *b_path)
     char buff[BF_SIZE], username[1024];
     username[1023] = '\0';
     getlogin_r(username, 1023);
-    FILE *fp = fopen(b_path, "r");
-    while(fgets(buff, sizeof(buff), fp) != NULL)
+    FILE *file = fopen(b_path, "r");
+    while(fgets(buff, sizeof(buff), file) != NULL)
     {
+        char *output = fgets(buff, sizeof(buff), file);
+
         // QUIT BATCH MODE
         if(strcmp(buff, "quit\n") == 0)
         {
@@ -137,7 +143,7 @@ void batch(char *b_path)
         printf("\n\n");
     }
     fputs("\n", stdout);
-    fclose(fp);
+    fclose(file);
     exit(0);
 }
 /* [END] BATCH MODE */

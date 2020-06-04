@@ -1,3 +1,13 @@
+/*---------------------------------------
+* Programación avanzada: Proyecto final
+*
+* Fecha: 03-06-2020
+*
+* Autor: Irving Alain Aguilar Pérez - A01703171
+*
+*
+* Referencias: Ejercicios de https://github.com/Manchas2k4/advanced_programming/tree/master/
+*----------------------------------------*/
 #include "shell.h"
 int main(int argc, char *argv[])
 {
